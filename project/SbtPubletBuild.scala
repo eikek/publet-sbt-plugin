@@ -18,7 +18,7 @@ object SbtPubletBuild extends Build {
     pomExtra := extraPom,
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
     libraryDependencies ++= Seq(
-      "org.eknet.publet" %% "publet-server" % "1.0.0-SNAPSHOT" % "optional"
+      "org.eknet.publet" %% "publet-app" % "1.0.0-SNAPSHOT" % "optional"
     )
   )
 

@@ -1,6 +1,7 @@
 package org.eknet.publet.sbt
 
 import org.eknet.publet.server._
+import org.eknet.publet.app._
 import org.eclipse.jetty.server.Server
 import scala.Some
 import org.eclipse.jetty.server.handler.{ContextHandler, ContextHandlerCollection}
