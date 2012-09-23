@@ -2,12 +2,13 @@ import sbt._
 import Keys._
 
 object SbtPubletBuild extends Build {
+
   lazy val module = Project("sbt-publet", file(".")) settings(buildProperties: _*)
 
   def buildProperties: Seq[Project.Setting[_]] = Defaults.defaultSettings ++ Seq(
+    name := "publet-sbt-plugin",
     sbtPlugin := true,
     organization := "org.eknet.publet",
-    name := "sbt-publet",
     version := "1.0.0-SNAPSHOT",
     publishMavenStyle := true,
     publishArtifact in Test := false,
