@@ -7,7 +7,7 @@ import org.eknet.publet.server._
  * @author Eike Kettner eike.kettner@gmail.com
  * @since 22.09.12 20:03
  */
-object PubletStbPlugin extends Plugin {
+object PubletSbtPlugin extends Plugin {
 
   val publetPort = SettingKey[Int]("publet-port", "The port for the publet server.")
   val publetDir = SettingKey[File]("publet-dir", "The publet directory.")
