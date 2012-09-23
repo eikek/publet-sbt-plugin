@@ -12,6 +12,8 @@ object SbtPubletBuild extends Build {
     version := "1.0.0-SNAPSHOT",
     publishMavenStyle := true,
     publishArtifact in Test := false,
+    publishTo := Some("eknet-maven2" at "https://eknet.org/maven2"),
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     pomIncludeRepository := (_ => false),
     pomExtra := extraPom,
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
