@@ -5,6 +5,9 @@ import org.eclipse.jetty.server.Server
 import scala.Some
 import org.eclipse.jetty.server.handler.{ContextHandler, ContextHandlerCollection}
 import scala.Some
+import org.eclipse.jetty.webapp.{WebAppContext, WebAppClassLoader}
+import tools.nsc.util.ScalaClassLoader.URLClassLoader
+import java.net.URL
 
 /**
  * @author Eike Kettner eike.kettner@gmail.com
@@ -14,7 +17,7 @@ object ServerRunner {
 
   private var server: PubletServer = null
 
-  def start(portNum: Int, workingDir: String) {
+  def start(portNum: Int, workingDir: String, projectClasspath: String) {
     if (server == null) {
       val config = new DefaultConfig {
         override def port = Some(portNum)
@@ -27,7 +30,18 @@ object ServerRunner {
             case x:ContextHandlerCollection => {
               for (handler <- x.getChildHandlers) {
                 handler match {
-                  case ch:ContextHandler => ch.setClassLoader(getClass.getClassLoader)
+                  case ch:ContextHandler => {
+                    if (ch.isInstanceOf[WebAppContext]) {
+                      val webapp = ch.asInstanceOf[WebAppContext]
+                      val loader = new WebAppClassLoader(getClass.getClassLoader, webapp)
+                      loader.addClassPath(projectClasspath)
+                      webapp.setClassLoader(loader)
+                      webapp.setExtraClasspath(projectClasspath)
+                    } else {
+                      val loader = new URLClassLoader(Seq(new URL(projectClasspath)), getClass.getClassLoader)
+                      ch.setClassLoader(loader)
+                    }
+                  }
                   case _ =>
                 }
               }
