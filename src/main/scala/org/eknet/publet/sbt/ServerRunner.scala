@@ -2,13 +2,11 @@ package org.eknet.publet.sbt
 
 import org.eknet.publet.server._
 import org.eknet.publet.app._
-import org.eclipse.jetty.server.Server
-import scala.Some
-import org.eclipse.jetty.server.handler.{ContextHandler, ContextHandlerCollection}
 import scala.Some
 import org.eclipse.jetty.webapp.{WebAppContext, WebAppClassLoader}
 import tools.nsc.util.ScalaClassLoader.URLClassLoader
 import java.net.URL
+import org.eclipse.jetty.servlet.ServletContextHandler
 
 /**
  * @author Eike Kettner eike.kettner@gmail.com
@@ -24,31 +22,18 @@ object ServerRunner {
         override def port = Some(portNum)
         override def workingDirectory = workingDir
       }
-      server = new PubletServer(config, new WebAppConfigurer {
-        def configure(server: Server, config: ServerConfig) {
-          CodeWebappConfigurer.configure(server, config)
-          server.getHandler match {
-            case x:ContextHandlerCollection => {
-              for (handler <- x.getChildHandlers) {
-                handler match {
-                  case ch:ContextHandler => {
-                    if (ch.isInstanceOf[WebAppContext]) {
-                      val webapp = ch.asInstanceOf[WebAppContext]
-                      val loader = new WebAppClassLoader(getClass.getClassLoader, webapp)
-                      loader.addClassPath(projectClasspath)
-                      webapp.setClassLoader(loader)
-                      webapp.setExtraClasspath(projectClasspath)
-                    } else {
-                      val loader = new URLClassLoader(Seq(new URL(projectClasspath)), getClass.getClassLoader)
-                      ch.setClassLoader(loader)
-                    }
-                  }
-                  case _ =>
-                }
-              }
-            }
-            case _ =>
-          }
+      server = new PubletServer(config, new CodeWebappConfigurer(None) {
+        override protected def postProcessWebAppContext(webapp: WebAppContext) {
+          val loader = new WebAppClassLoader(getClass.getClassLoader, webapp)
+          loader.addClassPath(projectClasspath)
+          webapp.setClassLoader(loader)
+          webapp.setExtraClasspath(projectClasspath)
+        }
+
+        override protected def postProcessServletContext(sch: ServletContextHandler) {
+          val loader = new URLClassLoader(Seq(new URL(projectClasspath)), getClass.getClassLoader)
+          sch.setClassLoader(loader)
+          sch.setInitParameter("custom-classpath", projectClasspath)
         }
       })
     }
