@@ -25,7 +25,7 @@ object SbtPubletBuild extends Build {
     name := "publet-sbt-plugin",
     sbtPlugin := true,
     organization := "org.eknet.publet",
-    version := "1.0.0-rc1",
+    version := "1.0.0-SNAPSHOT",
     publishMavenStyle := true,
     publishArtifact in Test := false,
     publishTo := Some("eknet-maven2" at "https://eknet.org/maven2"),
