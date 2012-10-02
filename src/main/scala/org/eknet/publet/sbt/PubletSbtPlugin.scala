@@ -42,7 +42,7 @@ object PubletSbtPlugin extends Plugin {
     publetClean <<= publetDir map (dir => {
       IO.delete(dir)
     }),
-    publetStart <<= (publetDir, publetPort, classDir) map ((pdir: File, port: Int, cd: File) => {
+    publetStart <<= (publetDir, publetPort, classDir, Keys.`package` in Compile) map ((pdir: File, port: Int, cd: File, pf: File) => {
       startPublet(port, pdir.getAbsolutePath, cd.toURI.toString)
     }),
     publetStop := {
