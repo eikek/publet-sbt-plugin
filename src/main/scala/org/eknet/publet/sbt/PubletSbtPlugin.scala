@@ -42,8 +42,12 @@ object PubletSbtPlugin extends Plugin {
     publetClean <<= publetDir map (dir => {
       IO.delete(dir)
     }),
-    publetStart <<= (publetDir, publetPort, classDir, Keys.`package` in Compile) map ((pdir: File, port: Int, cd: File, pf: File) => {
-      startPublet(port, pdir.getAbsolutePath, cd.toURI.toString)
+    publetStart <<= (publetDir, publetPort, classDir, Keys.fullClasspath in Runtime, Keys.`package` in Compile) map ((pdir, port, cd, classpath, pf) => {
+      val excludes = Set("scala-library.jar", "scala-compiler.jar", pf.getName)
+      val filtered = classpath.filterNot(p => excludes.contains(p.data.asFile.getName))
+      val cp = if (filtered.isEmpty) cd.toURI.toString
+        else cd.toURI.toString+";"+ filtered.map(_.data.toURI.toString).mkString(";")
+      startPublet(port, pdir.getAbsolutePath, cp)
     }),
     publetStop := {
       stopPublet()

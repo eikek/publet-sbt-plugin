@@ -23,6 +23,7 @@ import org.eclipse.jetty.webapp.{WebAppContext, WebAppClassLoader}
 import tools.nsc.util.ScalaClassLoader.URLClassLoader
 import java.net.URL
 import org.eclipse.jetty.servlet.ServletContextHandler
+import com.google.common.base.{CharMatcher, Splitter}
 
 /**
  * @author Eike Kettner eike.kettner@gmail.com
@@ -57,7 +58,14 @@ object ServerRunner {
         }
 
         override protected def postProcessServletContext(sch: ServletContextHandler) {
-          val loader = new URLClassLoader(Seq(new URL(projectClasspath)), getClass.getClassLoader)
+          import collection.JavaConversions._
+          val urls = Splitter.on(CharMatcher.anyOf(",;"))
+            .omitEmptyStrings()
+            .split(projectClasspath)
+            .map(new URL(_))
+            .toSeq
+
+          val loader = new URLClassLoader(urls, this.getClass.getClassLoader)
           sch.setClassLoader(loader)
           sch.setInitParameter("custom-classpath", projectClasspath)
         }
