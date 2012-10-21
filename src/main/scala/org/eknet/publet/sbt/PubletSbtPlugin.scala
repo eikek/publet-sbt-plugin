@@ -34,6 +34,13 @@ object PubletSbtPlugin extends Plugin {
 
   private val classDir = Keys.classDirectory in (Compile)
 
+  def createClasspath(pf: File, cd: File, classpath: Keys.Classpath) = {
+    val excludes = Set("scala-library.jar", "scala-compiler.jar", pf.getName)
+    val filtered = classpath.filterNot(p => excludes.contains(p.data.asFile.getName))
+    if (filtered.isEmpty) cd.toURI.toString
+      else cd.toURI.toString+";"+ filtered.map(_.data.toURI.toString).mkString(";") 
+  }
+
   val publetSettings = Seq(
     publetPort := 8088,
     publetDir <<= Keys.target(dir => {
@@ -43,18 +50,16 @@ object PubletSbtPlugin extends Plugin {
       IO.delete(dir)
     }),
     publetStart <<= (publetDir, publetPort, classDir, Keys.fullClasspath in Runtime, Keys.`package` in Compile) map ((pdir, port, cd, classpath, pf) => {
-      val excludes = Set("scala-library.jar", "scala-compiler.jar", pf.getName)
-      val filtered = classpath.filterNot(p => excludes.contains(p.data.asFile.getName))
-      val cp = if (filtered.isEmpty) cd.toURI.toString
-        else cd.toURI.toString+";"+ filtered.map(_.data.toURI.toString).mkString(";")
+      val cp = createClasspath(pf, cd, classpath)
       startPublet(port, pdir.getAbsolutePath, cp)
     }),
     publetStop := {
       stopPublet()
     },
-    publetRestart <<= (publetDir, publetPort, classDir) map ((pdir: File, port: Int, cd: File) => {
+    publetRestart <<= (publetDir, publetPort, classDir, Keys.fullClasspath in Runtime, Keys.`package` in Compile) map ((pdir, port, cd, classpath, pf) => {
       stopPublet()
-      startPublet(port, pdir.getAbsolutePath, cd.toURI.toString)
+      val cp = createClasspath(pf, cd, classpath)
+      startPublet(port, pdir.getAbsolutePath, cp)
     })
   )
 
