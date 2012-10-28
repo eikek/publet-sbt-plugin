@@ -21,11 +21,10 @@ to your project:
 
 ## Usage
 
-To use the plugin, have a look at the provided keys. They're all prefixed with `publet-`.
+To use the plugin, have a look at the provided keys. They're all prefixed with `publet:`.
 
-The command `publet-start` starts a publet instance with the current project. It can be
-viewed at <http://localhost:8088>. Similarly `publet-stop` stops the running publet instance. Both
-can be executed at once using `publet-restart`.
+The command `publet:start` starts a publet instance with the current project. It can be
+viewed at <http://localhost:8088>. Similarly `publet:stop` stops the running publet instance.
 
 When changing templates in the current project a `package` command should update the classpath
 accordingly and a refresh in the browser shows the changes. The server does not need to be restarted.
