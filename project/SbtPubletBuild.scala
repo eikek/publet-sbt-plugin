@@ -32,10 +32,7 @@ object SbtPubletBuild extends Build {
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     pomIncludeRepository := (_ => false),
     pomExtra := extraPom,
-    scalacOptions ++= Seq("-deprecation", "-unchecked"),
-    libraryDependencies ++= Seq(
-      "org.eknet.publet" %% "publet-app" % "1.0.0-SNAPSHOT" % "optional"
-    )
+    scalacOptions ++= Seq("-deprecation", "-unchecked")
   )
 
   def extraPom = (
