@@ -49,7 +49,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.eknet.publet.sbt
 
 import sbt._
-import Keys._
+import sbt.Keys._
 import Classpaths._
 import classpath.ClasspathUtilities._
 import PubletPlugin.Keys._
@@ -114,7 +114,7 @@ class PubletContainer(name: String) {
           state.stop()
           onUnload(state)
     },
-    start <<= (state) map ((state) => {
+    start <<= (state, Keys.`package` in Compile) map ((state, _) => {
       state.start()
     }),
     stop <<= (state).map (state => {
