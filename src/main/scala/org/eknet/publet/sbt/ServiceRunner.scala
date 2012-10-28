@@ -20,13 +20,16 @@ package org.eknet.publet.sbt
  * @author Eike Kettner eike.kettner@gmail.com
  * @since 28.10.12 00:49
  */
-class ServiceRunner(loader: ClassLoader, wd: String) {
+class ServiceRunner(loader: ClassLoader, port: Int, wd: String) {
 
   lazy val service = {
     val sconfig = loader.loadClass("org.eknet.publet.server.ServerConfig")
     val config = loader.loadClass("org.eknet.publet.server.DefaultConfig").newInstance().asInstanceOf[AnyRef]
-    val setter = config.getClass.getMethod("setWorkingDirectory", classOf[String])
-    setter.invoke(config, wd)
+    val setterWd = config.getClass.getMethod("setWorkingDirectory", classOf[String])
+    setterWd.invoke(config, wd)
+    val setterPort = config.getClass.getMethod("setPort", classOf[Option[Int]])
+    setterPort.invoke(config, Some(port))
+
     val clazz = loader.loadClass("org.eknet.publet.app.PubletService")
     clazz.getConstructor(sconfig, classOf[Option[ClassLoader]]).newInstance(config, Some(loader)).asInstanceOf[AnyRef]
   }

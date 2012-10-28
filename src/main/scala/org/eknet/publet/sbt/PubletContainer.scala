@@ -79,13 +79,13 @@ class PubletContainer(name: String) {
 
     private implicit def keyToResult[T](key: TaskKey[T])(implicit state: State): T = eval(key)
 
-    def newRunner(ref: ProjectRef, state: State, wd: File, cd: File, pf: File) = {
+    def newRunner(ref: ProjectRef, state: State, port: Int, wd: File, cd: File, pf: File) = {
       implicit val s = state
       val classpath = Set(cd) ++
         Build.data( (fullClasspath in (ref, Configuration)).filter(filterClasspath(_, pf))  )
       val loader = (scalaInstance in ref).loader
 
-      state.put(attribute, new ServiceRunner(toLoader(classpath.distinct, loader), wd.getAbsolutePath))
+      state.put(attribute, new ServiceRunner(toLoader(classpath.distinct, loader), port, wd.getAbsolutePath))
     }
   }
 
@@ -102,10 +102,10 @@ class PubletContainer(name: String) {
     cleanWorkdir <<= workdir map (dir => {
       IO.delete(dir)
     }),
-    onLoad in Global <<= (onLoad in Global, thisProjectRef, workdir, classDirectory in Compile, target) {
-      (onLoad, containerProject, wd, cd, pf) =>
+    onLoad in Global <<= (onLoad in Global, thisProjectRef, port, workdir, classDirectory in Compile, target) {
+      (onLoad, containerProject, port, wd, cd, pf) =>
         (state) => {
-          Impl.newRunner(containerProject, onLoad(state), wd, cd, pf)
+          Impl.newRunner(containerProject, onLoad(state), port, wd, cd, pf)
         }
     },
     onUnload in Global <<= (onUnload in Global) {
