@@ -25,23 +25,14 @@ object SbtPubletBuild extends Build {
     name := "publet-sbt-plugin",
     sbtPlugin := true,
     organization := "org.eknet.publet",
-    version := "1.0.0-SNAPSHOT",
+    version := "1.0.0",
     publishMavenStyle := true,
     publishArtifact in Test := false,
     publishTo := Some("eknet-maven2" at "https://eknet.org/maven2"),
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     pomIncludeRepository := (_ => false),
-    pomExtra := extraPom,
+    licenses := Seq(("ASL2", new URL("http://www.apache.org/licenses/LICENSE-2.0.txt"))),
     scalacOptions ++= Seq("-deprecation", "-unchecked")
   )
 
-  def extraPom = (
-    <url>https://eknet.org/projects/publet/</url>
-    <licenses>
-      <license>
-        <name>Apache 2</name>
-        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      </license>
-    </licenses>
-  )
 }

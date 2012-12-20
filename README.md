@@ -9,14 +9,14 @@ Add the plugin in `project/build.sbt` together with the publet dependency:
 
     resolvers += "eknet.org" at "https://eknet.org/maven2"
 
-    addSbtPlugin("org.eknet.publet" % "publet-sbt-plugin" % "1.0.0-SNAPSHOT")
+    addSbtPlugin("org.eknet.publet" % "publet-sbt-plugin" % "1.0.0")
 
 Please change the version as appropriate. In the `build.sbt` file, add the settings
 to your project:
 
     seq(publetSettings: _*)
 
-    libraryDependencies += "org.eknet.publet" %% "publet-app" % "1.0.0-SNAPSHOT" % "publet"
+    libraryDependencies += "org.eknet.publet" %% "publet-app" % "1.0.0" % "publet"
 
 
 ## Usage
